@@ -72,4 +72,5 @@ ax.set_ylabel('Number of languages', fontsize=12)
 ax.set_title('Distribution of African languages by native speaker count', fontsize=14)
 
 plt.tight_layout()
+plt.savefig('africa_languages_histogram.png', dpi=150, bbox_inches='tight')
 plt.show()
