@@ -3,7 +3,9 @@
 # looking for the most commonly written about concepts by NASA
 # using natural language processing 
 
+from dask.dataframe.shuffle import sort_values
 import pandas as pd
+import matplotlib.pyplot as plt
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -15,12 +17,16 @@ apod_raw = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytu
 
 apod = apod_raw.copy()
 
+# make date column datetime class
+apod['date'] = pd.to_datetime(apod['date'])
+year_min = apod['date'].dt.year.min()
+year_max = apod['date'].dt.year.max()
+
 # -- 2. explore the data a bit --
 print(apod.shape)
 print(apod.dtypes)
 print(apod.head())
 
-print(apod['explanation'].isnull().sum()) # look for nulls
 print(apod['explanation'].iloc[0]) # peek at an entry
 
 # -- 3. Analyze explanation text -- 
@@ -30,7 +36,7 @@ apod_clean = apod.dropna(subset=['explanation'])
 all_text = ' '.join(apod_clean['explanation'].tolist())
 
 # convert all to lowercase and remove any non alphabet characters to 
-# explanation text tokens
+# explanation text 
 # py list comprehension - new learning concept: in general, 
 # Create a new list by doing [this action] 
 # to [every item] in this [old list] 
@@ -60,7 +66,7 @@ replacements = {
 # replace in the token list
 tokens = [replacements.get(word, word) for word in tokens]
 
-# count how often each word appears
+# count how often each word appears - into dictionary
 word_counts = Counter(tokens)
 
 # -- 4. Convert back to pd df for filtering --
@@ -70,6 +76,7 @@ df_words = pd.DataFrame(
     columns = ['word', 'count']
 ) 
 
+# -- 5. add custom stop words and filter out -- 
 # look at the top 50 most common words and create custom stop words
 # might need to do a few passes with custom stops to get a solid eventual top 20
 print(df_words.head(50))
@@ -85,7 +92,27 @@ custom_stops = {'image', 'near', 'years', 'known', 'one',
 # filter out (~) the custom stops from words
 df_words = df_words[~df_words['word'].isin(custom_stops)]
 
-# do some checking to ensure the top 30 words are meaningful before
+# do some checking to ensure the top 20 words are meaningful before
 # and ensure custom-stop set is good ahove 
-# subsetting df to top 30 
-df_top30 = df_words.head(30).copy()
+# subsetting df to top 20 
+df_top20 = df_words.head(20).copy()
+
+# ensure df is sorted by count 
+df_top20 = df_top20.sort_values('count', ascending=False)
+
+# -- 6. make a horizontal lollipop plot --
+fig, ax = plt.subplots()
+
+# add hline (stem)
+ax.hlines(df_top20['word'], xmin=0, xmax=df_top20['count'])
+ax.scatter(df_top20['count'], df_top20['word'], color='blue', alpha=1)
+
+# axis titles
+ax.set_xlabel('Number of occurences')
+ax.set_title(f"Top 20 most common concepts in NASA Astronomy Picture of the Day\n({year_min} to {year_max})", fontsize = 12)
+
+
+
+
+
+
