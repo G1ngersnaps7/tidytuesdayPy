@@ -111,8 +111,8 @@ ax.scatter(df_top20['count'], df_top20['word'], color='blue', alpha=1)
 ax.set_xlabel('Number of occurences')
 ax.set_title(f"Top 20 most common concepts in NASA Astronomy Picture of the Day\n({year_min} to {year_max})", fontsize = 12)
 
-
-
+plt.savefig('2026/week_03_nasa_apod/plots/apod_top20_concepts.png', 
+            dpi=150, bbox_inches='tight')
 
 
 
