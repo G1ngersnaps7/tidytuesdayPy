@@ -16,15 +16,13 @@ edible_plants = edible_plants_raw.copy()
 # water needs 
 # ph range 
 # hardiness
-# median grow to harvest time (time investment)
+# nutrient needs 
 # and group by sunlight requirements 
 
 # convert needed cols to lowercase to standardize 
-to_lower = ['sunlight', 'water', 'temperature_class']
+to_lower = ['sunlight', 'water', 'temperature_class', 'nutrients']
 for col in to_lower:
     edible_plants[col] = edible_plants[col].str.lower()
-
-
 
 # 3.a. create sunlight groups (collapse sparse into 3 major)
 sunlight_grps = {
@@ -40,7 +38,7 @@ sunlight_grps = {
 water_grps = {
     'high':0, 'very high':0, 
     'medium':0.5,
-    'low':1.0, 'very Low':1.0
+    'low':1.0, 'very low':1.0
 }
 # 3.c. create hardiness scores (higher score is easier)
 hardiness_grps = {
@@ -49,6 +47,15 @@ hardiness_grps = {
     'half hardy':0.5,
     'hardy':0.75, 
     'very hard':1, 'very hardy':1
+}
+
+# 3.d. create the nutrient scores
+nutrient_grps = {
+    'high': 0, 
+    'high potassium fertilizer every 2 weeks': 0, 
+    'medium': 0.5, 
+    'medium to high': 0.5, 
+    'low': 0
 }
 
 # 3.d. create a ph range score (wider range is easier)
@@ -72,9 +79,11 @@ edible_plants_plot = (
     .assign(ph_score = lambda x: x.ph_range.apply(ph_score))
     .assign(sun_clean = lambda x: x.sunlight.map(sunlight_grps))
     .assign(hard_score = lambda x: x.temperature_class.map(hardiness_grps))
+    .assign(nutrient_score = lambda x: x.nutrients.map(nutrient_grps))
     .assign(water_score = lambda x: x.water.map(water_grps))
-    .assign(ease_score = lambda x: x[['ph_score', 'water_score', 'hard_score']].sum(axis=1))
-    .filter(items=['common_name', 'sun_clean', 'ease_score'])
+    .assign(ease_score = lambda x: x[['ph_score', 'water_score', 'nutrient_score', 'hard_score']].sum(axis=1))
+    .filter(items=['common_name', 'sun_clean', 'ph_score', 
+    'water_score', 'nutrient_score', 'hard_score', 'ease_score'])
 )
 
 
