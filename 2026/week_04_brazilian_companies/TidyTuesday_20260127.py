@@ -2,7 +2,7 @@
 # Brazilian Companies - looking at business legal nature by captial stock
 
 # libraries
-from itertools import count
+# from itertools import count
 import pandas as pd 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -54,5 +54,18 @@ ax.barh(top10['legal_nature'], top10['capital_concentration_ratio'], color='#390
 ax.axvline(x=1, color='grey', linestyle='--', linewidth=1)
 ax.set_xlabel('Capital concentration ratio')
 
-plt.tight_layout()
-plt.show()
+# title 
+ax.set_title("Who holds the most money? Capital concentration by Business Type in Brasil", 
+loc = 'left', fontweight = 'bold', fontsize = 12, pad = 45)
+# subtitle 
+# subtitle positioned within axes
+ax.text(0, 1.02, 
+        "Capital concentration ratio = share of total capital ÷ share of total companies.\nA ratio of 8 means that business type controls 8x more capital than its prevalence alone would predict.",
+        transform=ax.transAxes,
+        fontsize=9, color='grey', va='bottom')
+# add annotation (arrow pointing to index of 1)
+ax.annotate('baseline: capital share = company share', xy=(1,5), xytext=(2, 5.5),
+arrowprops=dict(facecolor='blue',shrink=0.05))
+
+plt.savefig('2026/week_04_brazilian_companies/plots/braz_companies_ccr.png', 
+            dpi=150, bbox_inches='tight')
