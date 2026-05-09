@@ -6,7 +6,7 @@
 # -- 1. Load libraries --
 import pandas as pd
 import numpy as np
-from great_tables import GT, style, loc # tables
+from great_tables import GT, style, loc, md # tables
 import emoji 
 
 # -- 2. Get TT data from GitHub --
@@ -108,9 +108,12 @@ edible_plants_tbl['sun_clean']=edible_plants_tbl['sun_clean'].map(sun_emojis)
 # --4. Visualize top plants by sunlight category in a pretty table
 
 tbl = (
-    GT(edible_plants_tbl)
-    .tab_header(title="Easiest plants to grow by sunlight need")
-    .tab_stub(groupname_col='sun_clean')
+    GT(edible_plants_tbl, 
+    rowname_col='common_name',
+    groupname_col='sun_clean')
+    .tab_header(
+        title=md("**Easiest plants to grow by sunlight need**"), 
+        subtitle="Plants scored 0–1 on water needs, hardiness, pH tolerance, and nutrient needs — higher is easier to grow.")
     .cols_label(
         common_name = 'Plant', 
         ph_score = 'pH Score', 
@@ -120,15 +123,22 @@ tbl = (
         ease_score = 'Easiness score'
         )
     # style
+    .opt_row_striping() # zebra striping
     .tab_style(
         style=style.text(weight="bold"),
         locations=loc.row_groups()
     )
     .tab_style(
-        style=style.text(color="green", weight="bold"),
-        locations=loc.stub()
+    style=style.text(weight="bold", color = "green"),
+    locations=loc.stub()
+    )
+    .tab_style(
+        style=style.fill(color="#90EE90"),
+        locations=loc.body(columns='ease_score')
     )
 )
+
+
 
 # --5. Save the output table as html
 html = tbl.as_raw_html()
