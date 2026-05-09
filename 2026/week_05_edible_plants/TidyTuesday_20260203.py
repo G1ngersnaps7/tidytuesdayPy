@@ -138,11 +138,5 @@ tbl = (
     )
 )
 
-
-
-# --5. Save the output table as html
-html = tbl.as_raw_html()
-html = html.replace('<head>', '<head>\n<meta http-equiv="Content-Type" content="text/html; charset=utf-8">')
-
-with open("2026/week_05_edible_plants/outputs/plant_table.html", "w", encoding="utf-8") as f:
-    f.write(html)
+# --5. Save the output table as png
+tbl.save("2026/week_05_edible_plants/outputs/plant_table.png")
