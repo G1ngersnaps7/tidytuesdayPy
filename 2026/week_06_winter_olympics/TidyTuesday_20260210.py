@@ -41,11 +41,18 @@ dates = sorted(day_types['end_datetime_local'].unique())
 # create the figure and axes
 fig, ax = plt.subplots()
 
+# add the February xaxis title top left
+ax.text(-1.5, -1.5, 'February', 
+        transform=ax.transData,
+        fontsize=12, fontweight='bold',
+        ha='right', va='center')
+
 # create x-axis ticks (each day of Olympics and labels)
 # and put on top of plot
-xlabs = [d.strftime('%b %d') for d in dates]
+xlabs = [d.strftime('%d') for d in dates]
 ax.set_xticks(range(len(dates)), labels=xlabs)
-ax.tick_params(axis='x', labelrotation=45, top=True, labeltop=True, bottom=False, labelbottom=False)
+ax.tick_params(axis='x', top=True, labeltop=True, bottom=False, labelbottom=False)
+ax.set_xlim(-1, len(dates))
 
 # set yaxis labels and have white space at edges
 ax.set_yticks(range(len(disciplines)), labels=disciplines)
@@ -55,6 +62,12 @@ ax.set_ylim(len(disciplines), -1)
 medal_img = plt.imread('2026/week_06_winter_olympics/images/medal.png')
 square_img = plt.imread('2026/week_06_winter_olympics/images/red_square.png')
 
+# create zebra striping (color on even rows)
+for i in range(len(disciplines)):
+    if i % 2 == 0: 
+        ax.axhspan(i - 0.5, i + 0.5, color='lightgrey', alpha=0.3, zorder=0)
+
+# add the correct emoji icon for event event by medal or not medal event 
 for _, row in day_types.iterrows():
     x = dates.index(row['end_datetime_local'])
     y = disciplines.index(row['discipline_name'])
@@ -64,3 +77,6 @@ for _, row in day_types.iterrows():
     imagebox = OffsetImage(img, zoom=0.05)
     ab = AnnotationBbox(imagebox, (x, y), frameon=False)
     ax.add_artist(ab)
+
+plt.savefig('2026/week_06_winter_olympics/plots/olympic2026_schedule.png', 
+            dpi=150, bbox_inches='tight')
