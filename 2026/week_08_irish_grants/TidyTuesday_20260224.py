@@ -79,5 +79,8 @@ fig = go.Figure(data=go.Sankey(
 fig.update_layout(title_text="Science Foundation Ireland - grant commitments by insitution (2001-2024)",
  font_size=12)
 
-#save the plot as png
-fig.write_image("week_08_irish_grants/plots/sfi_sankey.png")
+#save the plot as png. 
+# note there appears to be an issue with the latest version of 
+#plotly and kaleido when saving static images. 
+# had to use versions: plotly==5.24.0 kaleido==0.2.1
+fig.write_image("2026/week_08_irish_grants/plots/sfi_sankey.png")
