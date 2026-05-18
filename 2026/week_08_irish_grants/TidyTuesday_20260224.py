@@ -5,7 +5,7 @@
 # grant amount from the Ireland Science foundation has been distributed 
 # by research body (the top ones)
 
-# --1. libraries ------
+# --- 1. libraries ------
 import pandas as pd
 import plotly.graph_objects as go #for sankey diagrams
 
@@ -14,7 +14,7 @@ sfi_grants_raw = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/
 
 sfi_grants = sfi_grants_raw.copy()
 
-# --3. Create tidy df for plotting -----
+# --- 3. Create tidy df for plotting -----
 sfi_grants = sfi_grants[['funder_name','research_body','current_total_commitment']]
 
 # total grant amount awarded
@@ -41,5 +41,43 @@ others = pd.DataFrame({
 
 #concat into one df
 totals = pd.concat([top10, others]).reset_index(drop=True)
-# add the funder col back in
-totals['funder_name'] = 'Science Foundation Ireland'
+
+# --- 4. Create the sankey diagram using plotly -----
+
+grant_total=totals['current_total_commitment'].sum()
+
+# create the plot labels
+source_label = f"Science Foundation Ireland<br>€{grant_total/1e9:.2f}B"
+target_labels = [
+    f"{row['research_body']}<br>€{row['current_total_commitment']/1e6:.0f}M"
+    for _, row in totals.iterrows()
+]
+labels = [source_label]+target_labels
+
+# links: all flow from node 0 to each research body node
+sources = [0] * len(totals)
+targets = list(range(1, len(totals) + 1))
+values = totals["current_total_commitment"].tolist()
+
+#plotly Sankey 
+fig = go.Figure(data=go.Sankey(
+    node = dict(
+        label=labels, 
+        pad=30, 
+        thickness=20, 
+        color=["#06402B"] + ["#1D9E75"] * (len(totals) - 1) + ["#B4B2A9"],
+    ),
+    link = dict(
+        source=sources, 
+        target=targets, 
+        value=values, 
+        color="rgba(136, 231, 136, 0.49)",
+    ),
+))
+
+# add a title
+fig.update_layout(title_text="Science Foundation Ireland - grant commitments by insitution (2001-2024)",
+ font_size=12)
+
+#save the plot as png
+fig.write_image("week_08_irish_grants/plots/sfi_sankey.png")
