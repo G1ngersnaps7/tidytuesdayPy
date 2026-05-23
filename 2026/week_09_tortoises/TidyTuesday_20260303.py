@@ -67,19 +67,26 @@ locality_colors = {
 # sex cols 
 sex_colors = {
     'f': '#B7410E',
-    'm': '658B38'
+    'm': '#658B38'
 }
 
 #plot theme
 sns.set_style('whitegrid')
+
 
 # --5. Plots ----
 
 # set up 2-plot figure 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10))
 
-# plot 1 (ax1)
+# set figure background
+fig.patch.set_facecolor("#F5F0E8")  # warm off-white
 
+# set each axes background to match
+ax1.set_facecolor("#F5F0E8")
+ax2.set_facecolor("#F5F0E8")
+
+# plot 1 (ax1) - lineplot
 sns.lineplot(
     data=sex_props, 
     x = 'year', 
@@ -90,3 +97,52 @@ sns.lineplot(
     linewidth=2,
     ax = ax1
 )
+
+#plot 1 labels 
+ax1.set_xlabel("Year")
+ax1.set_ylabel("Proportion female")
+ax1.set_title("Sex composition over time by locality", fontweight='bold')
+legend1 = ax1.legend(title="Locality")
+legend1.get_frame().set_facecolor("#F5F0E8")
+legend1.get_frame().set_edgecolor("none") 
+
+# plot 2 - violin plot 
+sns.violinplot(
+    data=individual_means, 
+    x="locality", 
+    y="body_condition_index", 
+    hue="sex",
+    split=True,
+    inner='quart', 
+    order=locality_order,
+    palette=sex_colors,
+    ax=ax2
+)
+#plot 2 labels 
+ax2.set_xlabel("Locality")
+ax2.set_ylabel("Body Condition Index")
+ax2.legend(title="Sex")
+legend2 = ax2.legend(title="Sex")
+legend2.get_frame().set_facecolor("#F5F0E8")
+legend2.get_frame().set_edgecolor("none")
+ax2.set_title("Sex composition by sex and locality", pad=15, fontweight='bold')
+ax2.text(
+    x=0.5, y=1.01,
+    s="Individual mean BCI, averaged across all survey years",
+    transform=ax2.transAxes,
+    ha="center",
+    fontsize=9,
+    color="grey"
+)
+
+fig.text(
+    x=0.99, y=0.01,
+    s="#PydyTuesday - 2026 Week 9",
+    ha="right",
+    va="bottom",
+    fontsize=9,
+    color="grey"
+)
+
+# save the plot
+plt.savefig('2026/week_09_tortoises/plots/tortoise_differences.png', dpi=300, bbox_inches="tight")
