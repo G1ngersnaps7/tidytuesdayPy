@@ -100,7 +100,7 @@ sns.lineplot(
 
 #plot 1 labels 
 ax1.set_xlabel("Year")
-ax1.set_ylabel("Proportion female")
+ax1.set_ylabel("Proportion Female")
 ax1.set_title("Sex composition over time by locality", fontweight='bold')
 legend1 = ax1.legend(title="Locality")
 legend1.get_frame().set_facecolor("#F5F0E8")
