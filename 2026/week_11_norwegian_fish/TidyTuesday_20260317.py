@@ -6,8 +6,8 @@
 # -- 1. Libraries ----
 #from inspect import CO_VARKEYWORDS
 import pandas as pd
-import matplotlib.pyplot as plt
-import statsmodels.api as sm      
+import matplotlib.pyplot as plt 
+import statsmodels.formula.api as smf   
 
 # --2. Load TT data for week 11 ----
 mort = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2026/2026-03-17/monthly_mortality_data.csv')
@@ -27,7 +27,7 @@ def get_trend(g):
     g = g.sort_values('date').copy()
     g['month_num'] = range(len(g))
     return smf.ols('median ~ month_num', data=g).fit(
-        cov_type='HAC', cov_kwds={'maxlags': 4})
+        cov_type='HAC', cov_kwds={'maxlags': 3}) # used T^1/4
 
 # one model per county, stored in a dict by region name
 models = {region: get_trend(g) for region, g in sc.groupby('region')}
