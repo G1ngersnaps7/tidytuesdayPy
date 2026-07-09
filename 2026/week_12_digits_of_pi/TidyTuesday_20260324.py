@@ -4,6 +4,10 @@
 # Visualize the digits of pi via a pi walk - assign 
 #  map each number to a direction representing cardinal 
 # and intercardinal directions 
+# Inspiration from seeing pi walk visualizations online. 
+# References:
+# - R-bloggers walkthrough (Venn's 1888 method): https://www.r-bloggers.com/2018/04/approximations-of-pi-a-random-walk-though-the-beauty-of-pi/
+# - Aragón Artacho et al. 100 billion digit walk (visual): https://www.gigapan.com/gigapans/106803
 
 
 # -- 1. Libraries ----
